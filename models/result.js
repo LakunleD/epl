@@ -12,7 +12,7 @@ const JoiResultSchema = joi.object({
     away_id: joi.string().meta({ _mongoose: { type: "ObjectId", ref: "Team" } })
 });
 
-const ValidateResult = (result) => JoiTeamSchema.validate(result);
+const ValidateResult = (result) => JoiResultSchema.validate(result);
 
 const MongooseResultSchema = new mongoose.Schema(joigoose.convert(JoiResultSchema));
 

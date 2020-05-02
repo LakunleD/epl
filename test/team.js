@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const { expect } = chai;
 
 const server = require('../epl');
-const { Team } = require('../models/team')
+const { Team } = require('../models/team');
 
 chai.use(chaiHttp);
 
