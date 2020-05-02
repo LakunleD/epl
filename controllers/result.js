@@ -19,4 +19,17 @@ const createResult = async(req, res) => {
     }
 }
 
+const viewResult = async(req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const results = await Result.find({$or: [{ home_id: id }, { away_id: id }]})
+        res.send({ success : true, results });
+    }
+    catch (error) {
+        res.status(400).send({ success: false, message: error.message })
+    }
+}
+
 exports.createResult = createResult;
+exports.viewResult = viewResult;
