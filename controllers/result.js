@@ -2,6 +2,8 @@ const { Result, ValidateResult } = require('../models/result');
 
 const createResult = async(req, res) => {
     try{
+        req.body.date = Date.now()
+
         const { error } = await ValidateResult(req.body);
         if (error) return res.status(400).send({ success:false, message: error.details[0].message });
 

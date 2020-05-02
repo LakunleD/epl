@@ -9,7 +9,8 @@ const JoiResultSchema = joi.object({
     home_goal: joi.number().required(),
     away_goal: joi.number().required(),
     home_id: joi.string().meta({ _mongoose: { type: "ObjectId", ref: "Team" } }),
-    away_id: joi.string().meta({ _mongoose: { type: "ObjectId", ref: "Team" } })
+    away_id: joi.string().meta({ _mongoose: { type: "ObjectId", ref: "Team" } }),
+    date: joi.date().required()
 });
 
 const ValidateResult = (result) => JoiResultSchema.validate(result);
