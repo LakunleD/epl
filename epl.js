@@ -1,10 +1,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const db = require('./startup/db');
+const routes = require('./routes/index');
 
 dotenv.config();
 const app = express();
 
+app.use(express.json());
+routes(app);
 db();
 
 const port = process.env.EPL_SERVER_PORT;
