@@ -193,14 +193,20 @@ describe('testing the result API', async() => {
     });
 
     describe('GET /results', () => {
+        let total;
+
         it('by default, it should retrieve the last 10 results for a team', async () => {
             const res = await chai.request(server).get(`/results/${team1_id}`);
             const { body } = res;
+
+            total = body.total;
 
             expect(res.statusCode).equal(200);
             expect(body).to.have.property('success').equal(true);
             expect(body.results).to.be.a('array');
             expect(body.results).length.to.be.lessThan(10);
+            expect(body).to.have.property('total');
+            expect(body.total).to.be.a('number');
         });
 
         it('it should return at most 2 results', async () => {
@@ -211,6 +217,20 @@ describe('testing the result API', async() => {
             expect(body).to.have.property('success').equal(true);
             expect(body.results).to.be.a('array');
             expect(body.results).length.to.be.lessThan(2);
+            expect(body).to.have.property('total');
+            expect(body.total).to.be.a('number');
+        });
+
+        it('should throw an error because total number of documents exceeded', async () => {
+            const limit = 5;
+            const page = (total / limit) + 1;
+            const res = await chai.request(server).get(`/results/${team1_id}?page=${page}&limit=${limit}`);
+            const { body } = res;
+            expect(res.statusCode).equal(400);
+            expect(body).to.have.property('success').equal(false);
+            expect(body).to.have.property('total');
+            expect(body.total).to.be.a('number');
+            expect(body.message).to.be.a('string').equal('total number of documents exceeded');
         });
     });
 });
