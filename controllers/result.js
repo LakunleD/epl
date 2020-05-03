@@ -27,7 +27,7 @@ const viewResult = async(req, res) => {
         const { page, perPage } = req.query;
         
         const limit = parseInt(perPage, 10) || 10;
-        const skip = page > 1 ? (page - 1) * 10  : 0 || 0
+        const skip = page > 1 ? (page - 1) * limit  : 0 || 0
 
         const results = await Result.find({ $or: [{ home_id: id }, { away_id: id }]})
                                     .populate('home_id')
