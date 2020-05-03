@@ -27,18 +27,24 @@ const viewResult = async(req, res) => {
         const { page, perPage } = req.query;
         
         const limit = parseInt(perPage, 10) || 10;
-        const skip = page > 1 ? (page - 1) * limit  : 0 || 0
+        const skip = page > 1 ? (page - 1) * limit  : 0 || 0;
 
-        const results = await Result.find({ $or: [{ home_id: id }, { away_id: id }]})
+        const options = { $or: [{ home_id: id }, { away_id: id }]};
+
+        const total = await Result.countDocuments(options);
+
+        if (total <= skip) return res.status(400).send({ success: false, message: "total number of documents exceeded", total });
+        
+        const results = await Result.find(options)
                                     .populate('home_id')
                                     .populate('away_id')
                                     .sort({ date: -1 })
                                     .limit(limit)
                                     .skip(skip)
-        res.send({ success : true, results });
+        res.send({ success : true, results, total });
     }
     catch (error) {
-        res.status(400).send({ success: false, message: error.message })
+        res.status(400).send({ success: false, message: error.message });
     }
 }
 
