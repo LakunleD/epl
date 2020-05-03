@@ -155,7 +155,7 @@ describe('testing the result API', async() => {
             expect(body.message).to.be.a('string').equal('"away_goal" must be a number');
         });
 
-        it.only('return an error because home_id must be an ObjectId', async () => {
+        it('return an error because home_id must be an ObjectId', async () => {
             const result = {
                 home_id: 'team1_id',
                 away_id: team2_id,
@@ -173,7 +173,7 @@ describe('testing the result API', async() => {
             expect(body.message).to.be.a('string').equal('Result validation failed: home_id: Cast to ObjectID failed for value "team1_id" at path "home_id"');
         });
 
-        it.only('return an error because away_id must be an ObjectId', async () => {
+        it('return an error because away_id must be an ObjectId', async () => {
             const result = {
                 home_id: team1_id,
                 away_id: 'team2_id',

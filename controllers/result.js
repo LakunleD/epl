@@ -24,8 +24,17 @@ const createResult = async(req, res) => {
 const viewResult = async(req, res) => {
     try {
         const { id } = req.params;
+        const { page, perPage } = req.query;
         
-        const results = await Result.find({$or: [{ home_id: id }, { away_id: id }]})
+        const limit = parseInt(perPage, 10) || 10;
+        const skip = page > 1 ? (page - 1) * 10  : 0 || 0
+
+        const results = await Result.find({ $or: [{ home_id: id }, { away_id: id }]})
+                                    .populate('home_id')
+                                    .populate('away_id')
+                                    .sort({ date: -1 })
+                                    .limit(limit)
+                                    .skip(skip)
         res.send({ success : true, results });
     }
     catch (error) {
