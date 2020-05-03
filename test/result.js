@@ -190,6 +190,27 @@ describe('testing the result API', async() => {
             expect(body).to.have.property('success').equal(false);
             expect(body.message).to.be.a('string').equal('Result validation failed: away_id: Cast to ObjectID failed for value "team2_id" at path "away_id"');
         });
+    });
 
+    describe('GET /results', () => {
+        it('by default, it should retrieve the last 10 results for a team', async () => {
+            const res = await chai.request(server).get(`/results/${team1_id}`);
+            const { body } = res;
+
+            expect(res.statusCode).equal(200);
+            expect(body).to.have.property('success').equal(true);
+            expect(body.results).to.be.a('array');
+            expect(body.results).length.to.be.lessThan(10);
+        });
+
+        it('it should return at most 2 results', async () => {
+            const res = await chai.request(server).get(`/results/${team1_id}?limit=2`);
+            const { body } = res;
+            
+            expect(res.statusCode).equal(200);
+            expect(body).to.have.property('success').equal(true);
+            expect(body.results).to.be.a('array');
+            expect(body.results).length.to.be.lessThan(2);
+        });
     });
 });
