@@ -1,4 +1,5 @@
 const { ValidateTeam, Team } = require('../models/team');
+const { ValidateTableDetails, Table } = require('../models/table');
 
 const createTeam = async(req, res) => {
     try{
@@ -9,6 +10,19 @@ const createTeam = async(req, res) => {
         await team.save();
 
         res.status(201).send({ success : true, team});
+
+        let data = {
+            team_id: team._id,
+            match_played: 0,
+            wins: 0,
+            draws: 0,
+            loss: 0,
+            goal_scored: 0,
+            goal_against: 0
+        }
+
+        const table = new Table(data);
+        table.save();
     }
     catch(err){
         res.status(400).send({success: false})
