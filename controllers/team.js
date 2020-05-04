@@ -1,5 +1,10 @@
+const fawn = require('fawn');
+const mongoose = require('mongoose');
+
 const { ValidateTeam, Team } = require('../models/team');
-const { ValidateTableDetails, Table } = require('../models/table');
+const { Table } = require('../models/table');
+
+fawn.init(mongoose);
 
 const createTeam = async(req, res) => {
     try{
@@ -7,10 +12,7 @@ const createTeam = async(req, res) => {
         if (error) return res.status(400).send({ success:false, message: error.details[0].message });
 
         const team = new Team(req.body);
-        await team.save();
-
-        res.status(201).send({ success : true, team});
-
+        
         let data = {
             team_id: team._id,
             match_played: 0,
@@ -22,7 +24,13 @@ const createTeam = async(req, res) => {
         }
 
         const table = new Table(data);
-        table.save();
+        
+        await new fawn.Task()
+                        .save('teams', team)
+                        .save('tables', table)
+                        .run()
+
+        res.status(201).send({ success : true, team });
     }
     catch(err){
         res.status(400).send({success: false})
