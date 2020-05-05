@@ -1,5 +1,7 @@
 const { Result, ValidateResult } = require('../models/result');
 
+const { Table } = require('../models/table')
+
 const createResult = async(req, res) => {
     try{
         req.body.date = Date.now()
@@ -7,17 +9,41 @@ const createResult = async(req, res) => {
         const { error } = await ValidateResult(req.body);
         if (error) return res.status(400).send({ success:false, message: error.details[0].message });
 
-        const { home_id, away_id } = req.body;
+        const { home_id, away_id, home_goal, away_goal } = req.body;
 
         if (home_id == away_id) return res.status(400).send({ success:false, message: 'same team cannot play against each other' });
 
-        const result = new Result(req.body);
-        await result.save();
+        if (home_goal > away_goal){
+            const result = new Result(req.body);
+            await result.save();
 
-        res.status(201).send({ success : true, result });
+            await Table.updateOne({ team_id: home_id }, { $inc: { wins: 1, goal_scored: home_goal, goal_against: away_goal }});
+            await Table.updateOne({ team_id: away_id }, { $inc: { loss: 1, goal_scored: away_goal, goal_against: home_goal }});
+
+            return res.status(201).send({ success : true, result });
+            
+        }
+        else if (home_goal < away_goal){
+            const result = new Result(req.body);
+            await result.save();
+            
+            await Table.updateOne({ team_id: home_id }, { $inc: { loss: 1, goal_scored: home_goal, goal_against: away_goal }});
+            await Table.updateOne({ team_id: away_id }, { $inc: { wins: 1, goal_scored: away_goal, goal_against: home_goal }});
+            
+            return res.status(201).send({ success : true, result });
+        }
+        else{
+            const result = new Result(req.body);
+            await result.save();
+
+            await Table.updateOne({ team_id: home_id }, { $inc: { draws: 1, goal_scored: home_goal, goal_against: away_goal }});
+            await Table.updateOne({ team_id: away_id }, { $inc: { draws: 1, goal_scored: away_goal, goal_against: home_goal }});
+
+            return res.status(201).send({ success : true, result });
+        }
     }
     catch(err){
-        res.status(400).send({ success: false, message: err.message })
+        res.status(400).send({ success: false, message: err.message });
     }
 }
 

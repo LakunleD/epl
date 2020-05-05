@@ -1,6 +1,5 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const mongoose = require('mongoose');
 
 const { expect } = chai;
 
@@ -16,7 +15,7 @@ describe('testing the result API', async() => {
     let team2_id;
 
     after( async() => {
-        await mongoose.disconnect();
+        await Result.deleteMany({});
     });
 
     describe('POST /results', () => {
