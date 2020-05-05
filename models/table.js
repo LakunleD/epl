@@ -4,7 +4,6 @@ const joigoose = require("joigoose")(mongoose);
 
 const JoiTableSchema = joi.object({
     team_id: joi.string().meta({ _mongoose: { type: "ObjectId", ref: "Team" } }),
-    match_played: joi.number().required(),
     wins: joi.number().required(),
     draws: joi.number().required(),
     loss: joi.number().required(),
@@ -25,8 +24,12 @@ const ValidateTableDetails = (team_details) => JoiTeamSchema.validate(team_detai
 
 const MongooseTableSchema = new mongoose.Schema(joigoose.convert(JoiTableSchema), options);
 
+MongooseTableSchema.virtual('match_played').get((value, virtual, doc)  => {
+    return doc.wins + doc.draws + doc.loss;
+});
+
 MongooseTableSchema.virtual('points').get((value, virtual, doc)  => {
-    return (doc.wins * 3)+ doc.draws;
+    return (doc.wins * 3) + doc.draws;
 });
 
 MongooseTableSchema.virtual('goal_difference').get((value, virtual, doc)  => {
