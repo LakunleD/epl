@@ -33,7 +33,7 @@ MongooseTableSchema.virtual('points').get((value, virtual, doc)  => {
 });
 
 MongooseTableSchema.virtual('goal_difference').get((value, virtual, doc)  => {
-    return Math.abs(doc.goal_scored - doc.goal_against);
+    return doc.goal_scored - doc.goal_against;
 });
 
 const Table = mongoose.model('Table', MongooseTableSchema);
