@@ -4,7 +4,7 @@
   "description": "keeping track of the scores and state of the epl table",
   "main": "epl.js",
   "scripts": {
-    "test": "mocha --timeout 10000",
+    "test": "mocha --timeout 10000 --exit || true",
     "dev": "nodemon epl"
   },
   "repository": {

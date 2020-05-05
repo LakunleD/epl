@@ -12,6 +12,16 @@ chai.use(chaiHttp);
 describe('testing the team API', () => {
     
     let team_id;
+
+    before( async() => {
+        await mongoose.connect(process.env.EPL_TEST_MONGODB_URI,
+            {
+                useNewUrlParser: true,
+                useCreateIndex: true,
+                useFindAndModify: false,
+                useUnifiedTopology: true
+            });
+    })
     
     after( async() => {
         await Team.deleteMany({});

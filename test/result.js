@@ -1,5 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const mongoose = require('mongoose');
 
 const { expect } = chai;
 
@@ -14,8 +15,19 @@ describe('testing the result API', async() => {
     let team1_id;
     let team2_id;
 
+    before( async() => {
+        await mongoose.connect(process.env.EPL_TEST_MONGODB_URI,
+            {
+                useNewUrlParser: true,
+                useCreateIndex: true,
+                useFindAndModify: false,
+                useUnifiedTopology: true
+            });
+    })
+
     after( async() => {
         await Result.deleteMany({});
+        await mongoose.disconnect();
     });
 
     describe('POST /results', () => {
