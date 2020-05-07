@@ -59,6 +59,8 @@ const viewResult = async(req, res) => {
 
         const total = await Result.countDocuments(options);
 
+        if (total === 0) return res.status(400).send({ success: true, message: "no matches found for this team" });
+
         if (total <= skip) return res.status(400).send({ success: false, message: "total number of documents exceeded", total });
         
         const results = await Result.find(options)
