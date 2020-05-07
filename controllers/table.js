@@ -1,6 +1,5 @@
 const { Table } = require('../models/table');
 
-
 const GetTable = async(req, res) => {
     try {
         const table = await Table.find({})
